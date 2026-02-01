@@ -15,7 +15,7 @@ class Note:
 			self.__octave: int = self.octave_from_midi(self.__midi)
 			self.__name: str = self.name_from_midi(self.__midi, self.__generic_name, self.__octave)
 		
-		elif isinstance(note, str):
+		else:
 			midi = self.midi_from_name(note)
 			if midi is None: raise Exception('Note creation failed.')
 			self.__midi = midi
@@ -95,7 +95,7 @@ class Note:
 	def __sub__(self, other: Union['Note', int]) -> Union['Note', int]:
 		if isinstance(other, int):
 			return Note(self.midi - other)
-		if isinstance(other, Note):
+		else:
 			return self.midi - other.midi
 
 	def __eq__(self, value: object) -> bool:
