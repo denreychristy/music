@@ -1,9 +1,9 @@
-# Music - Main
+# Music - Note
 
 # ================================================================================================ #
 # Imports
 
-from typing import Optional, Union
+from typing	import Optional, Union
 
 # ================================================================================================ #
 
@@ -11,6 +11,7 @@ class Note:
 	def __init__(self, note: Union[int, str]) -> None:
 		if isinstance(note, int):
 			self.__midi: int = note
+			self.__generic_midi: int = self.__midi % 12
 			self.__generic_name: str = self.generic_name_from_midi(self.__midi)
 			self.__octave: int = self.octave_from_midi(self.__midi)
 			self.__name: str = self.name_from_midi(self.__midi, self.__generic_name, self.__octave)
@@ -19,6 +20,7 @@ class Note:
 			midi = self.midi_from_name(note)
 			if midi is None: raise Exception('Note creation failed.')
 			self.__midi = midi
+			self.__generic_midi = self.__midi % 12
 			self.__generic_name: str = self.generic_name_from_midi(self.__midi)
 			self.__octave: int = self.octave_from_midi(self.__midi)
 			self.__name: str = note
@@ -27,7 +29,7 @@ class Note:
 	# Class Methods
 
 	@classmethod
-	def enharmonic_equivalents(cls, note: str) -> Optional[list[str]]:
+	def get_enharmonic_equivalents(cls, note: str) -> Optional[list[str]]:
 		equivalent_groups = [
 			['A', 'G##', 'Bbb'],
 			['A#', 'Bb', 'Cbb'],
@@ -61,7 +63,7 @@ class Note:
 		for midi in range(0, 128):
 			octave = cls.octave_from_midi(midi)
 			generic_name = cls.generic_name_from_midi(midi)
-			enharmonic_equivalents = cls.enharmonic_equivalents(generic_name)
+			enharmonic_equivalents = cls.get_enharmonic_equivalents(generic_name)
 			if enharmonic_equivalents is None: return None
 			for note_name in enharmonic_equivalents:
 				if name == note_name + str(octave):
@@ -114,8 +116,16 @@ class Note:
 	# Property Methods
 
 	@property
+	def generic_midi(self) -> int:
+		return self.__generic_midi
+
+	@property
 	def generic_name(self) -> str:
 		return self.__generic_name
+	
+	@property
+	def enharmonic_equivalents(self) -> Optional[list[str]]:
+		return self.get_enharmonic_equivalents(self.generic_name)
 
 	@property
 	def midi(self) -> int:
